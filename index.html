@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<div class="max-w-7xl mx-auto main-layout">
+    
+    <!-- Sidebar / Daftar 100 Halaman -->
+    <div class="sidebar bg-white data-card rounded-xl p-4 mb-4 lg:mb-0 lg:mr-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Kartu Ternak (Formulir)</h2>
+        
+        <!-- Daftar Ternak (100 ID) -->
+        <div id="animal-list" class="space-y-1 max-h-64 lg:max-h-full overflow-y-auto">
+            <p class="text-gray-500 text-sm">Memuat daftar...</p>
+        </div>
+        
+        <p class="text-xs text-gray-500 mt-4 pt-4 border-t">UserID: <span id="user-id-display">N/A</span></p>
+    </div>
+
+    <!-- Konten Utama (Detail Ternak) -->
+    <div class="content-area bg-white rounded-xl overflow-hidden data-card">
+    
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="p-8 text-center text-lg text-emerald-600 hidden">
+            <p>Memuat data ternak <span id="loading-animal-id">...</span></p>
+        </div>
+
+        <!-- Header & Main Identity -->
+        <div class="bg-emerald-600 text-white p-6 sm:p-8">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-bold">E-TernakID</h1>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium bg-white text-emerald-600 px-3 py-1 rounded-full" id="status-ternak"></span>
+                    <!-- Tombol Edit -->
+                    <button onclick="openEditModal()" class="bg-yellow-400 text-gray-900 text-sm font-medium px-3 py-1 rounded-full hover:bg-yellow-500 transition duration-150">
+                        Edit Detail
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex flex-col sm:flex-row items-start sm:items-center">
+                <!-- Placeholder Foto Ternak (UKURAN DITINGKATKAN) -->
+                <div class="w-32 h-32 sm:w-48 sm:h-48 bg-emerald-700 rounded-full flex items-center justify-center text-6xl font-extrabold text-white border-4 border-white mb-4 sm:mb-0 sm:mr-6">
+                    <span id="initial-name">?</span>
+                </div>
+                
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold" id="nama-ternak">Memuat...</h2>
+                    <p class="text-sm opacity-90">No. Registrasi: <span id="reg-id">N/A</span></p>
+                    <p class="text-lg font-semibold mt-1"><span id="jenis-bangsa"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Meta Data -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-gray-100 bg-gray-50">
+            <div class="text-sm">
+                <p class="text-gray-500">Tanggal Lahir</p>
+                <p class="font-semibold" id="data-lahir">N/A</p>
+            </div>
+            <div class="text-sm">
+                <p class="text-gray-500">Usia</p>
+                <p class="font-semibold" id="data-usia">N/A</p>
+            </div>
+            <div class="text-sm">
+                <p class="text-gray-500">Pemilik</p>
+                <p class="font-semibold" id="data-pemilik">N/A</p>
+            </div>
+            <div class="text-sm">
+                <p class="text-gray-500">Alamat Peternakan</p>
+                <p class="font-semibold text-gray-800 truncate" id="data-alamat">N/A</p>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex space-x-2 sm:space-x-4 overflow-x-auto">
+                <button id="tab-kesehatan" onclick="showTab('kesehatan')" class="px-4 py-2 text-base font-medium rounded-lg transition duration-150 active-tab whitespace-nowrap">Riwayat Kesehatan</button>
+                <button id="tab-reproduksi" onclick="showTab('reproduksi')" class="px-4 py-2 text-base font-medium rounded-lg transition duration-150 inactive-tab whitespace-nowrap">Riwayat Reproduksi</button>
+                <button id="tab-pertumbuhan" onclick="showTab('pertumbuhan')" class="px-4 py-2 text-base font-medium rounded-lg transition duration-150 inactive-tab whitespace-nowrap">Data Pertumbuhan</button>
+                <button id="tab-silsilah" onclick="showTab('silsilah')" class="px-4 py-2 text-base font-medium rounded-lg transition duration-150 inactive-tab whitespace-nowrap">Silsilah Induk</button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="p-6">
+            
+            <!-- 1. Riwayat Kesehatan Tab -->
+            <div id="content-kesehatan" class="tab-content">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Catatan Medis & Vaksinasi</h3>
+                
+                <!-- Form Input Catatan Kesehatan Baru -->
+                <div class="p-4 bg-gray-100 rounded-lg mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Tambah Catatan Kesehatan Baru</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="health-type" class="block text-sm font-medium text-gray-700 mb-1">Jenis Catatan</label>
+                            <select id="health-type" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="Vaksinasi">Vaksinasi</option>
+                                <option value="Penyakit">Penyakit</option>
+                                <option value="Pengobatan">Pengobatan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="health-date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
+                            <input type="date" id="health-date" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="health-detail" class="block text-sm font-medium text-gray-700 mb-1">Detail (Nama Vaksin, Diagnosa, Nama Obat)</label>
+                            <input type="text" id="health-detail" placeholder="Cth: PMK Dosis 2 / Kembung Ringan" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="health-notes" class="block text-sm font-medium text-gray-700 mb-1">Keterangan / Penanganan (Opsional)</label>
+                            <textarea id="health-notes" rows="2" placeholder="Cth: Diberikan obat anti-bloat oral, sembuh total." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveHealthRecord()" class="w-full md:w-auto mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                        Simpan Catatan Kesehatan
+                    </button>
+                    <p id="health-update-message" class="text-sm mt-2 hidden"></p>
+                </div>
+
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">Daftar Riwayat Kesehatan (Terbaru dulu)</h4>
+                <div id="health-records-display" class="overflow-x-auto">
+                    <p class="text-gray-500">Data sedang dimuat...</p>
+                </div>
+            </div>
+
+            <!-- 2. Riwayat Reproduksi Tab -->
+            <div id="content-reproduksi" class="tab-content hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Catatan Reproduksi</h3>
+                
+                <!-- Form Input Catatan Reproduksi Baru (BARU) -->
+                <div class="p-4 bg-gray-100 rounded-lg mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Tambah Catatan Reproduksi Baru</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="repro-type" class="block text-sm font-medium text-gray-700 mb-1">Jenis Peristiwa</label>
+                            <select id="repro-type" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="Inseminasi Buatan (IB)">Inseminasi Buatan (IB)</option>
+                                <option value="Kawin Alami">Kawin Alami</option>
+                                <option value="Kebuntingan Dideteksi">Kebuntingan Dideteksi</option>
+                                <option value="Melahirkan">Melahirkan</option>
+                                <option value="Kelahiran">Kelahiran</option>
+                                <option value="Abortus">Abortus</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="repro-date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
+                            <input type="date" id="repro-date" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="repro-detail" class="block text-sm font-medium text-gray-700 mb-1">Detail (No. Semen / Hasil USG / Nama Anak)</label>
+                            <input type="text" id="repro-detail" placeholder="Cth: Semen ID: IB-05-BCX / Kebuntingan 3 Bulan / Anak: BIMA" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="repro-notes" class="block text-sm font-medium text-gray-700 mb-1">Keterangan (Opsional)</label>
+                            <textarea id="repro-notes" rows="2" placeholder="Cth: Birahi malam, IB sukses dilakukan pagi hari." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveReproductionRecord()" class="w-full md:w-auto mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                        Simpan Catatan Reproduksi
+                    </button>
+                    <p id="repro-update-message" class="text-sm mt-2 hidden"></p>
+                </div>
+
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">Status Fungsional (Data Statis)</h4>
+                <div id="data-reproduksi-static" class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg mb-6">
+                    <p class="text-gray-500">Memuat data statis...</p>
+                </div>
+
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">Daftar Riwayat Peristiwa (Terbaru dulu)</h4>
+                <div id="repro-records-display" class="overflow-x-auto">
+                    <p class="text-gray-500">Data sedang dimuat...</p>
+                </div>
+            </div>
+
+            <!-- 3. Data Pertumbuhan Tab -->
+            <div id="content-pertumbuhan" class="tab-content hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Pencatatan Bobot & ADG</h3>
+                
+                <!-- Form Input Bobot Baru (Fitur Aplikasi) -->
+                <div class="p-4 bg-gray-100 rounded-lg mb-4">
+                    <h4 class="font-semibold text-gray-700 mb-2">Catat Bobot Terbaru</h4>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="number" id="new-weight" placeholder="Bobot (kg)" class="p-2 border rounded-lg w-full sm:w-2/3 focus:ring-emerald-500 focus:border-emerald-500">
+                        <button onclick="updateWeight()" class="w-full sm:w-1/3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                            Simpan Bobot
+                        </button>
+                    </div>
+                    <p id="weight-update-message" class="text-sm mt-2 hidden text-red-500"></p>
+                </div>
+                
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-lg mb-4">
+                    <p class="text-lg font-bold text-purple-700">ADG (Average Daily Gain) Rata-rata: <span id="adg-average">N/A</span> kg/hari</p>
+                    <p class="text-sm text-gray-700">Bobot terakhir: **<span id="latest-weight">N/A</span> kg**.</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Timbang</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bobot (kg)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ADG (kg/hari)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-pertumbuhan-table" class="bg-white divide-y divide-gray-200 text-sm">
+                            <tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. Silsilah Induk Tab (Diperbarui menjadi Form Input) -->
+            <div id="content-silsilah" class="tab-content hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Input & Riwayat Silsilah (Pedigree)</h3>
+                
+                <!-- 1. TAMPILAN RIWAYAT SILSILAH (BARU) -->
+                <div id="pedigree-display" class="mb-6 p-4 border border-blue-200 rounded-xl bg-blue-50">
+                    <p class="text-gray-500 text-center">Data silsilah akan ditampilkan di sini setelah disimpan.</p>
+                </div>
+
+                <!-- Form Input Silsilah -->
+                <div class="p-4 bg-gray-100 rounded-lg mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Formulir Input Silsilah Induk dan Pejantan</h4>
+                    <div id="pedigree-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- INDUK (DAM) -->
+                        <div class="space-y-3 p-4 bg-pink-50 rounded-lg border border-pink-200">
+                            <p class="font-bold text-pink-700 text-lg">Induk (Dam)</p>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">Nama Induk</span>
+                                <input type="text" id="dam-name" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: SITI">
+                            </label>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">No. Registrasi Induk</span>
+                                <input type="text" id="dam-regid" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: SB001-2019-SITI">
+                            </label>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">Bangsa/Ras</span>
+                                <input type="text" id="dam-breed" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: Lokal Madura">
+                            </label>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">Jumlah Kelahiran Anak</span>
+                                <input type="number" id="dam-offspring" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: 3">
+                            </label>
+                        </div>
+
+                        <!-- PEJANTAN (SIRE) -->
+                        <div class="space-y-3 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                            <p class="font-bold text-indigo-700 text-lg">Pejantan (Sire)</p>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">Nama Pejantan/Semen</span>
+                                <input type="text" id="sire-name" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: JAKA">
+                            </label>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">No. Reg Semen/ID Pejantan</span>
+                                <input type="text" id="sire-semenid" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: IB-05-BCX">
+                            </label>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">Bangsa/Ras</span>
+                                <input type="text" id="sire-breed" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: Brahman Cross Murni">
+                            </label>
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700">Karakteristik Utama</span>
+                            <textarea id="sire-characteristics" rows="2" class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Cth: Potensi otot besar, pertumbuhan cepat"></textarea>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button onclick="savePedigree()" class="w-full md:w-auto mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                        Simpan Silsilah Induk
+                    </button>
+                    <p id="pedigree-update-message" class="text-sm mt-2 hidden"></p>
+                </div>
+
+                <p class="mt-4 text-xs text-gray-500 italic">Data silsilah terintegrasi penting untuk program peningkatan mutu genetik.</p>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Identitas Utama -->
+<div id="edit-modal" class="modal fixed inset-0 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl">
+        <h3 class="text-2xl font-bold mb-4 text-gray-800">Edit Detail Identitas Ternak</h3>
+        
+        <div id="edit-message-area" class="mb-4 hidden p-3 rounded-lg text-sm font-medium"></div>
+
+        <div class="space-y-4">
+            <div>
+                <label for="edit-birthdate" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
+                <input type="date" id="edit-birthdate" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                <p class="text-xs text-gray-500 mt-1">Mengubah tanggal lahir akan mengubah perhitungan usia.</p>
+            </div>
+            <div>
+                <label for="edit-owner" class="block text-sm font-medium text-gray-700 mb-1">Nama Pemilik</label>
+                <input type="text" id="edit-owner" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+            
+            <hr class="border-gray-100">
+
+            <div>
+                <label for="edit-name" class="block text-sm font-medium text-gray-700 mb-1">Nama Ternak</label>
+                <input type="text" id="edit-name" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+            <div>
+                <label for="edit-breed" class="block text-sm font-medium text-gray-700 mb-1">Jenis Bangsa</label>
+                <input type="text" id="edit-breed" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+            <div>
+                <label for="edit-gender" class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                <select id="edit-gender" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="Jantan">Jantan</option>
+                    <option value="Betina">Betina</option>
+                </select>
+            </div>
+            <div>
+                <label for="edit-status" class="block text-sm font-medium text-gray-700 mb-1">Status Ternak</label>
+                <input type="text" id="edit-status" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+             <!-- Field Alamat -->
+            <div>
+                <label for="edit-address" class="block text-sm font-medium text-gray-700 mb-1">Alamat Peternakan</label>
+                <textarea id="edit-address" rows="2" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+            </div>
+        </div>
+        
+        <div class="mt-6 flex justify-end space-x-3">
+            <button onclick="closeEditModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-150">
+                Batal
+            </button>
+            <button onclick="saveIdentity()" id="save-identity-btn" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition duration-150">
+                Simpan Perubahan
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modul Firebase dan Inisialisasi Logika -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, Timestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Variabel global dari Canvas
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    let db;
+    let auth;
+    let currentUserId = null;
+    let livestockData = null; 
+    
+    // --- VARIABEL GLOBAL BARU UNTUK MENGELOLA 100 HALAMAN ---
+    const ANIMAL_COUNT = 100; 
+    let currentAnimalId = null; 
+    let unsubscribeSnapshot = null; // Untuk membatalkan listener saat berganti ternak
+    // -----------------------------------------------------
+
+    document.getElementById('loading-indicator').classList.remove('hidden');
+
+    // Fungsi utilitas untuk menghitung usia
+    function calculateAge(birthDate) {
+        let birth;
+        if (typeof birthDate === 'string') {
+            birth = new Date(birthDate);
+        } else if (birthDate && typeof birthDate.toDate === 'function') {
+             birth = birthDate.toDate();
+        } else if (birthDate instanceof Date) {
+            birth = birthDate;
+        } else {
+            return 'N/A';
+        }
+
+        const today = new Date();
+        let ageYears = today.getFullYear() - birth.getFullYear();
+        let ageMonths = today.getMonth() - birth.getMonth();
+
+        if (ageMonths < 0 || (ageMonths === 0 && today.getDate() < birth.getDate())) {
+            ageYears--;
+            ageMonths += 12;
+        }
+        if (ageYears < 0) return 'Data Tidak Valid';
+
+        return `${ageYears} Tahun ${ageMonths} Bulan`;
+    }
+    
+    // Fungsi untuk mengkonversi Timestamp Firestore menjadi string tanggal YYYY-MM-DD
+    function timestampToDateString(timestamp) {
+         if (timestamp && typeof timestamp.toDate === 'function') {
+            const date = timestamp.toDate();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        return '';
+    }
+
+    // Fungsi utilitas untuk menghitung ADG
+    function calculateADG(growthRecords) {
+        if (!growthRecords || growthRecords.length < 2) {
+            return { average: 'N/A', records: growthRecords || [] };
+        }
+
+        const sortedRecords = growthRecords.slice().sort((a, b) => a.date.seconds - b.date.seconds);
+
+        let totalADG = 0;
+        let count = 0;
+
+        for (let i = 1; i < sortedRecords.length; i++) {
+            const prev = sortedRecords[i - 1];
+            const current = sortedRecords[i];
+
+            const daysDiff = (current.date.toDate().getTime() - prev.date.toDate().getTime()) / (1000 * 3600 * 24);
+            const weightDiff = current.weight - prev.weight;
+
+            if (daysDiff > 0) {
+                current.adg = (weightDiff / daysDiff).toFixed(2);
+                totalADG += parseFloat(current.adg);
+                count++;
+            } else {
+                current.adg = 'N/A';
+            }
+        }
+        
+        sortedRecords[0].adg = 'N/A';
+        
+        const averageADG = count > 0 ? (totalADG / count).toFixed(2) : 'N/A';
+
+        return { average: averageADG, records: sortedRecords };
+    }
+
+    function renderPedigreeDisplay(pedigree) {
+        const displayElement = document.getElementById('pedigree-display');
+        const dam = pedigree.dam || {};
+        const sire = pedigree.sire || {};
+
+        const isDataAvailable = dam.name || sire.name || dam.regId || sire.semenId;
+
+        if (!isDataAvailable) {
+            displayElement.innerHTML = '<p class="text-gray-500 text-center">Belum ada data silsilah induk dan pejantan yang tercatat. Silakan isi formulir di bawah ini.</p>';
+            return;
+        }
+
+        displayElement.innerHTML = `
+            <h4 class="font-bold text-blue-800 text-xl mb-4">Riwayat Silsilah Induk Ternak ${livestockData.name || ''}</h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Induk (DAM) Card -->
+                <div class="p-4 bg-pink-100 rounded-lg border border-pink-300">
+                    <p class="font-bold text-pink-800 text-lg mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" clip-rule="evenodd" />
+                        </svg>
+                        Induk (Dam)
+                    </p>
+                    <ul class="text-sm space-y-1 text-gray-700">
+                        <li><span class="font-semibold">Nama Induk:</span> ${dam.name || '-'}</li>
+                        <li><span class="font-semibold">No. Reg:</span> ${dam.regId || '-'}</li>
+                        <li><span class="font-semibold">Bangsa/Ras:</span> ${dam.breed || '-'}</li>
+                        <li><span class="font-semibold">Jml Anak Dlm Riwayat:</span> ${dam.offspring !== undefined ? dam.offspring : '-'}</li>
+                    </ul>
+                </div>
+                
+                <!-- Pejantan (SIRE) Card -->
+                <div class="p-4 bg-indigo-100 rounded-lg border border-indigo-300">
+                    <p class="font-bold text-indigo-800 text-lg mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11a1 1 0 10-2 0v1a1 1 0 102 0v-1zM9 13a1 1 0 102 0v-1h1a1 1 0 100-2h-1V9a1 1 0 10-2 0v1H8a1 1 0 100 2h1v1z" clip-rule="evenodd" />
+                        </svg>
+                        Pejantan (Sire)
+                    </p>
+                    <ul class="text-sm space-y-1 text-gray-700">
+                        <li><span class="font-semibold">Nama/Semen:</span> ${sire.name || '-'}</li>
+                        <li><span class="font-semibold">No. Semen/ID:</span> ${sire.semenId || '-'}</li>
+                        <li><span class="font-semibold">Bangsa/Ras:</span> ${sire.breed || '-'}</li>
+                        <li><span class="font-semibold">Karakteristik Utama:</span> ${sire.characteristics || '-'}</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+
+
+    // Fungsi untuk merender UI berdasarkan data
+    function renderUI(data) {
+        livestockData = data; 
+        
+        // 1. Header dan Meta Data
+        document.getElementById('nama-ternak').textContent = data.name || 'N/A';
+        document.getElementById('initial-name').textContent = (data.name ? data.name[0].toUpperCase() : '?');
+        document.getElementById('reg-id').textContent = data.regId || 'N/A';
+        document.getElementById('jenis-bangsa').textContent = `${data.breed || 'N/A'}, ${data.gender || 'N/A'}`;
+        document.getElementById('status-ternak').textContent = `STATUS: ${data.status || 'N/A'}`;
+        
+        document.getElementById('data-pemilik').textContent = data.owner || 'N/A'; 
+        document.getElementById('data-alamat').textContent = data.address || 'Belum diisi'; 
+        
+        const birthDateTimestamp = data.birthDate;
+        const birthDateDisplay = birthDateTimestamp ? birthDateTimestamp.toDate().toLocaleDateString('id-ID') : 'N/A';
+        document.getElementById('data-lahir').textContent = birthDateDisplay;
+        document.getElementById('data-usia').textContent = calculateAge(birthDateTimestamp);
+
+
+        // 2. Tab Kesehatan 
+        const healthDisplay = document.getElementById('health-records-display');
+        if (data.healthLog && data.healthLog.length > 0) {
+            const sortedLog = data.healthLog.slice().sort((a, b) => b.date.seconds - a.date.seconds);
+            
+            healthDisplay.innerHTML = `
+                <table class="min-w-full divide-y divide-gray-200 border rounded-lg">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Catatan</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                        ${sortedLog.map(log => {
+                            let typeClass = '';
+                            if (log.type === 'Penyakit') typeClass = 'text-red-600 font-medium';
+                            if (log.type === 'Vaksinasi') typeClass = 'text-blue-600';
+                            if (log.type === 'Pengobatan') typeClass = 'text-green-600';
+
+                            return `
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">${log.date ? log.date.toDate().toLocaleDateString('id-ID') : 'N/A'}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap ${typeClass}">${log.type}</td>
+                                    <td class="px-6 py-4">${log.detail}</td>
+                                    <td class="px-6 py-4">${log.notes || '-'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        } else {
+            healthDisplay.innerHTML = '<p class="text-gray-500 text-center p-4 border rounded-lg">Belum ada riwayat kesehatan yang dicatat.</p>';
+        }
+        
+        // 3. Tab Reproduksi
+        const role = data.reproduction.role || 'N/A';
+        const semenQuality = data.reproduction.semenQuality || 'N/A';
+        const semenDate = data.reproduction.semenTestDate ? data.reproduction.semenTestDate.toDate().toLocaleDateString('id-ID') : 'N/A';
+        const matings = data.reproduction.recentMatings !== undefined ? data.reproduction.recentMatings : 'N/A';
+        const successRate = data.reproduction.successRate || 'N/A';
+        
+        document.getElementById('data-reproduksi-static').innerHTML = `
+            <p class="font-semibold text-yellow-700 mb-2">Status Fungsional Ternak</p>
+            <p class="text-gray-700">Peran ternak dalam breeding adalah **${role}**. Status ini perlu diisi secara manual.</p>
+            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
+                <li>**Uji Kualitas Semen Terakhir:** ${semenQuality} - ${semenDate}.</li>
+                <li>**Jumlah Kawin/IB Terakhir (3 bulan):** ${matings} kali.</li>
+                <li>**Tingkat Keberhasilan (Semen/Bunting):** ${successRate}.</li>
+            </ul>
+        `;
+        
+        // B. Riwayat Log Reproduksi
+        const reproDisplay = document.getElementById('repro-records-display');
+        if (data.reproductionLog && data.reproductionLog.length > 0) {
+            const sortedLog = data.reproductionLog.slice().sort((a, b) => b.date.seconds - a.date.seconds);
+            
+            reproDisplay.innerHTML = `
+                <table class="min-w-full divide-y divide-gray-200 border rounded-lg">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peristiwa</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                        ${sortedLog.map(log => {
+                            let typeClass = '';
+                            if (log.type.includes('Kelahiran') || log.type.includes('Melahirkan')) typeClass = 'text-green-600 font-medium';
+                            if (log.type.includes('Abortus')) typeClass = 'text-red-600 font-medium';
+                            if (log.type.includes('IB') || log.type.includes('Kawin')) typeClass = 'text-blue-600';
+
+                            return `
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">${log.date ? log.date.toDate().toLocaleDateString('id-ID') : 'N/A'}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap ${typeClass}">${log.type}</td>
+                                    <td class="px-6 py-4">${log.detail}</td>
+                                    <td class="px-6 py-4">${log.notes || '-'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        } else {
+            reproDisplay.innerHTML = '<p class="text-gray-500 text-center p-4 border rounded-lg">Belum ada riwayat peristiwa reproduksi yang dicatat.</p>';
+        }
+        
+        // 4. Tab Pertumbuhan
+        const { average: avgADG, records: growthRecords } = calculateADG(data.growthRecords);
+        
+        document.getElementById('adg-average').textContent = avgADG;
+        document.getElementById('latest-weight').textContent = growthRecords[growthRecords.length - 1]?.weight || 'N/A';
+        
+        const growthTableBody = document.getElementById('data-pertumbuhan-table');
+        growthTableBody.innerHTML = growthRecords.map((record, index) => {
+            const isLatest = index === growthRecords.length - 1;
+            const weightClass = isLatest ? 'font-bold text-emerald-600' : 'whitespace-nowrap';
+            
+            const displayDate = record.date && typeof record.date.toDate === 'function' 
+                ? record.date.toDate().toLocaleDateString('id-ID') 
+                : new Date(record.date.seconds * 1000).toLocaleDateString('id-ID');
+
+            return `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">${index === 0 ? 'Tanggal Lahir' : displayDate}</td>
+                    <td class="px-6 py-4 ${weightClass}">${record.weight} kg</td>
+                    <td class="px-6 py-4 ${weightClass}">${record.adg || '-'}</td>
+                </tr>
+            `;
+        }).join('');
+        
+        // 5. Tab Silsilah
+        renderPedigreeDisplay(data.pedigree); 
+        
+        document.getElementById('dam-name').value = data.pedigree.dam.name || '';
+        document.getElementById('dam-regid').value = data.pedigree.dam.regId || '';
+        document.getElementById('dam-breed').value = data.pedigree.dam.breed || '';
+        document.getElementById('dam-offspring').value = data.pedigree.dam.offspring !== undefined ? data.pedigree.dam.offspring : '';
+
+        document.getElementById('sire-name').value = data.pedigree.sire.name || '';
+        document.getElementById('sire-semenid').value = data.pedigree.sire.semenId || '';
+        document.getElementById('sire-breed').value = data.pedigree.sire.breed || '';
+        document.getElementById('sire-characteristics').value = data.pedigree.sire.characteristics || '';
+    }
+
+    /**
+     * FUNGSI BARU: Mengambil data dari Firestore secara real-time untuk ANIMAL_ID yang aktif
+     */
+    function fetchLivestockData() {
+        if (!db || !currentUserId || !currentAnimalId) return;
+        
+        // Tampilkan indikator loading dan ID ternak
+        document.getElementById('loading-animal-id').textContent = currentAnimalId;
+        document.getElementById('loading-indicator').classList.remove('hidden');
+
+        // Batalkan listener sebelumnya jika ada
+        if (unsubscribeSnapshot) {
+            unsubscribeSnapshot();
+        }
+
+        const docRef = doc(db, 
+            `artifacts/${appId}/users/${currentUserId}/livestock`, 
+            currentAnimalId // Menggunakan ID ternak yang dipilih
+        );
+        
+        // Set listener baru
+        unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
+            document.getElementById('loading-indicator').classList.add('hidden');
+            
+            if (docSnap.exists()) {
+                renderUI(docSnap.data());
+            } else {
+                initializeDefaultData(docRef);
+            }
+            
+            // Pastikan tombol di sidebar ter-update
+            updateActiveAnimalButton(currentAnimalId);
+        }, (error) => {
+            console.error("Error getting livestock data:", error);
+            document.getElementById('loading-indicator').innerHTML = `<p class="text-red-500">Gagal memuat data untuk ${currentAnimalId}.</p>`;
+        });
+    }
+    
+    /**
+     * FUNGSI BARU: Mengubah ID Ternak yang sedang aktif dan memuat datanya.
+     */
+    window.selectAnimal = function(animalId) {
+        currentAnimalId = animalId;
+        // Panggil kembali fungsi fetch data
+        fetchLivestockData();
+    }
+
+    // FUNGSI BARU: Mengupdate visual tombol aktif di sidebar
+    function updateActiveAnimalButton(activeId) {
+        document.querySelectorAll('.animal-list-item').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.animalId === activeId) {
+                btn.classList.add('active');
+            }
+        });
+    }
+    
+    // FUNGSI BARU: Membuat daftar 100 ID Ternak dan merender sidebar
+    function createAnimalList() {
+        const listElement = document.getElementById('animal-list');
+        listElement.innerHTML = ''; // Bersihkan
+
+        for (let i = 1; i <= ANIMAL_COUNT; i++) {
+            // Format ID menjadi KIT-01, KIT-02, dst. (PERUBAHAN DISINI)
+            const idSuffix = String(i).padStart(2, '0');
+            const id = `KIT-${idSuffix}`; 
+            
+            const button = document.createElement('button');
+            button.textContent = `Ternak #${idSuffix} (${id})`;
+            button.dataset.animalId = id;
+            button.className = 'animal-list-item w-full text-left p-2 rounded-lg text-sm text-gray-700 hover:bg-emerald-100 transition duration-100';
+            button.onclick = () => window.selectAnimal(id);
+            listElement.appendChild(button);
+        }
+        
+        // Setelah membuat daftar, atur ID pertama sebagai ID yang aktif
+        currentAnimalId = `KIT-01`; // PERUBAHAN DISINI
+        updateActiveAnimalButton(currentAnimalId);
+    }
+
+    // Fungsi untuk inisialisasi data default (hanya dijalankan jika dokumen belum ada)
+    async function initializeDefaultData(docRef) {
+        const idNumber = parseInt(currentAnimalId.split('-')[1]); // Ambil angka ID (Sekarang dari KIT-XX)
+        const defaultData = {
+            name: `Ternak #${idNumber}`,
+            regId: currentAnimalId, // Menggunakan KIT-XX
+            breed: "Sapi Bali/Ongole",
+            gender: (idNumber % 2 === 0) ? "Jantan" : "Betina",
+            status: (idNumber % 5 === 0) ? "Afkir" : "Produktif",
+            owner: "Peternakan Multi-Card",
+            address: `Alamat Khayalan No. ${idNumber}, Peternakan Multi-Card`, 
+            birthDate: Timestamp.fromDate(new Date('2024-01-01')), 
+            
+            // Biarkan log kosong di awal untuk ternak baru
+            healthLog: [],
+            reproduction: { role: "N/A", semenQuality: "N/A", semenTestDate: null, recentMatings: 0, successRate: "N/A" },
+            reproductionLog: [],
+
+            // Hanya satu titik timbang (berat lahir atau berat inisiasi)
+            growthRecords: [
+                { date: Timestamp.fromDate(new Date('2024-01-01')), weight: 30 + idNumber }
+            ],
+            
+            pedigree: {
+                dam: { name: "", regId: "", breed: "", offspring: 0, adgAvg: "" },
+                sire: { name: "", semenId: "", breed: "", characteristics: "" }
+            }
+        };
+
+        try {
+            await setDoc(docRef, defaultData);
+            console.log(`Default data initialized for ${currentAnimalId}.`);
+        } catch (e) {
+            console.error("Error setting default document:", e);
+        }
+    }
+    
+    // Fungsi untuk menangani login dan inisialisasi Firebase
+    async function initFirebase() {
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            setLogLevel('Debug'); 
+            
+            createAnimalList(); // Buat daftar 100 ID di awal
+
+            if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await signInAnonymously(auth);
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUserId = user.uid;
+                    document.getElementById('user-id-display').textContent = user.uid;
+                    fetchLivestockData(); // Mulai fetching data untuk ID pertama
+                } else {
+                    currentUserId = crypto.randomUUID();
+                    document.getElementById('user-id-display').textContent = currentUserId + ' (Anonim)';
+                    document.getElementById('loading-indicator').innerHTML = '<p class="text-red-500">Gagal mengautentikasi pengguna.</p>';
+                }
+            });
+
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+            document.getElementById('loading-indicator').innerHTML = '<p class="text-red-500">Kesalahan Inisialisasi Firebase.</p>';
+        }
+    }
+
+    // --- FUNGSI UNTUK MODAL & SAVE IDENTITY ---
+
+    window.openEditModal = function() {
+        if (!livestockData) { console.error("Data ternak belum dimuat."); return; }
+        document.getElementById('edit-name').value = livestockData.name || '';
+        document.getElementById('edit-breed').value = livestockData.breed || '';
+        document.getElementById('edit-gender').value = livestockData.gender || 'Jantan';
+        document.getElementById('edit-status').value = livestockData.status || '';
+        document.getElementById('edit-address').value = livestockData.address || ''; 
+        document.getElementById('edit-birthdate').value = timestampToDateString(livestockData.birthDate);
+        document.getElementById('edit-owner').value = livestockData.owner || '';
+        document.getElementById('edit-modal').classList.remove('hidden');
+        const messageArea = document.getElementById('edit-message-area');
+        messageArea.classList.add('hidden');
+        messageArea.classList.remove('bg-red-100', 'text-red-700', 'bg-emerald-100', 'text-emerald-700');
+    };
+
+    window.closeEditModal = function() {
+        document.getElementById('edit-modal').classList.add('hidden');
+    };
+
+    window.saveIdentity = async function() {
+        const saveBtn = document.getElementById('save-identity-btn');
+        const messageArea = document.getElementById('edit-message-area');
+        
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Menyimpan...';
+        messageArea.classList.add('hidden');
+        
+        const birthDateString = document.getElementById('edit-birthdate').value.trim();
+        let newBirthDateTimestamp = null;
+        
+        if (birthDateString) {
+            const dateParts = birthDateString.split('-');
+            const dateObject = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+            if (isNaN(dateObject)) {
+                 messageArea.textContent = 'Format Tanggal Lahir tidak valid.';
+                 messageArea.classList.remove('hidden');
+                 messageArea.classList.add('bg-red-100', 'text-red-700');
+                 saveBtn.disabled = false;
+                 saveBtn.textContent = 'Simpan Perubahan';
+                 return;
+            }
+            newBirthDateTimestamp = Timestamp.fromDate(dateObject);
+        }
+
+        const updatedData = {
+            name: document.getElementById('edit-name').value.trim(),
+            breed: document.getElementById('edit-breed').value.trim(),
+            gender: document.getElementById('edit-gender').value,
+            status: document.getElementById('edit-status').value.trim(),
+            address: document.getElementById('edit-address').value.trim(),
+            owner: document.getElementById('edit-owner').value.trim(),
+            birthDate: newBirthDateTimestamp || livestockData.birthDate // Pertahankan yang lama jika input baru kosong
+        };
+        
+        if (!updatedData.name || !updatedData.breed || !updatedData.status || !updatedData.address || !updatedData.owner || !updatedData.birthDate) {
+            messageArea.textContent = 'Semua field harus diisi.';
+            messageArea.classList.remove('hidden');
+            messageArea.classList.add('bg-red-100', 'text-red-700');
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Simpan Perubahan';
+            return;
+        }
+
+        const docRef = doc(db, 
+            `artifacts/${appId}/users/${currentUserId}/livestock`, 
+            currentAnimalId // Menggunakan ID ternak yang dipilih
+        );
+        
+        try {
+            await updateDoc(docRef, updatedData);
+            
+            messageArea.textContent = 'Detail berhasil diperbarui!';
+            messageArea.classList.remove('bg-red-100', 'text-red-700');
+            messageArea.classList.add('bg-emerald-100', 'text-emerald-700');
+            messageArea.classList.remove('hidden');
+            
+            setTimeout(() => {
+                closeEditModal();
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Simpan Perubahan';
+            }, 2000);
+
+        } catch (e) {
+            console.error("Error updating identity:", e);
+            messageArea.textContent = 'Gagal menyimpan data ke database: ' + e.message;
+            messageArea.classList.remove('bg-emerald-100', 'text-emerald-700');
+            messageArea.classList.add('bg-red-100', 'text-red-700');
+            messageArea.classList.remove('hidden');
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Simpan Perubahan';
+        }
+    };
+
+    // --- FUNGSI UNTUK MENYIMPAN RIWAYAT KESEHATAN ---
+    window.saveHealthRecord = async function() {
+        const type = document.getElementById('health-type').value;
+        const detail = document.getElementById('health-detail').value.trim();
+        const dateString = document.getElementById('health-date').value;
+        const notes = document.getElementById('health-notes').value.trim();
+        const messageElement = document.getElementById('health-update-message');
+        messageElement.classList.add('hidden');
+
+        if (!type || !detail || !dateString) {
+            messageElement.textContent = 'Jenis Catatan, Detail, dan Tanggal harus diisi.';
+            messageElement.classList.remove('hidden', 'text-emerald-600');
+            messageElement.classList.add('text-red-500');
+            return;
+        }
+        
+        const date = new Date(dateString);
+        if (isNaN(date) || date > new Date()) { 
+            messageElement.textContent = 'Format Tanggal tidak valid atau tanggal berada di masa depan.';
+            messageElement.classList.remove('hidden', 'text-emerald-600');
+            messageElement.classList.add('text-red-500');
+            return;
+        }
+
+        const newRecord = {
+            date: Timestamp.fromDate(date),
+            type: type,
+            detail: detail,
+            notes: notes
+        };
+
+        const docRef = doc(db, `artifacts/${appId}/users/${currentUserId}/livestock`, currentAnimalId);
+
+        try {
+            await updateDoc(docRef, {
+                healthLog: arrayUnion(newRecord)
+            });
+            
+            document.getElementById('health-detail').value = '';
+            document.getElementById('health-date').value = '';
+            document.getElementById('health-notes').value = '';
+            document.getElementById('health-type').value = 'Vaksinasi'; 
+            
+            messageElement.textContent = 'Catatan kesehatan berhasil disimpan!';
+            messageElement.classList.remove('hidden', 'text-red-500');
+            messageElement.classList.add('text-emerald-600');
+            setTimeout(() => messageElement.classList.add('hidden'), 3000);
+
+        } catch (e) {
+            console.error("Error saving health record:", e);
+            messageElement.textContent = 'Gagal menyimpan data ke database: ' + e.message;
+            messageElement.classList.remove('hidden', 'text-emerald-600');
+            messageElement.classList.add('text-red-500');
+        }
+    };
+    
+    // --- FUNGSI UNTUK MENYIMPAN RIWAYAT REPRODUKSI ---
+    window.saveReproductionRecord = async function() {
+        const type = document.getElementById('repro-type').value;
+        const detail = document.getElementById('repro-detail').value.trim();
+        const dateString = document.getElementById('repro-date').value;
+        const notes = document.getElementById('repro-notes').value.trim();
+        const messageElement = document.getElementById('repro-update-message');
+        
+        messageElement.classList.add('hidden');
+
+        if (!type || !detail || !dateString) {
+            messageElement.textContent = 'Jenis Peristiwa, Detail, dan Tanggal harus diisi.';
+            messageElement.classList.remove('hidden', 'text-emerald-600');
+            messageElement.classList.add('text-red-500');
+            return;
+        }
+        
+        const date = new Date(dateString);
+        if (isNaN(date) || date > new Date()) { 
+            messageElement.textContent = 'Format Tanggal tidak valid atau tanggal berada di masa depan.';
+            messageElement.classList.remove('hidden', 'text-emerald-600');
+            messageElement.classList.add('text-red-500');
+            return;
+        }
+
+        const newRecord = {
+            date: Timestamp.fromDate(date),
+            type: type,
+            detail: detail,
+            notes: notes
+        };
+
+        const docRef = doc(db, `artifacts/${appId}/users/${currentUserId}/livestock`, currentAnimalId);
+
+        try {
+            await updateDoc(docRef, {
+                reproductionLog: arrayUnion(newRecord)
+            });
+            
+            document.getElementById('repro-detail').value = '';
+            document.getElementById('repro-date').value = '';
+            document.getElementById('repro-notes').value = '';
+            document.getElementById('repro-type').value = 'Inseminasi Buatan (IB)'; 
+            
+            messageElement.textContent = 'Catatan reproduksi berhasil disimpan!';
+            messageElement.classList.remove('hidden', 'text-red-500');
+            messageElement.classList.add('text-emerald-600');
+            setTimeout(() => messageElement.classList.add('hidden'), 3000);
+
+        } catch (e) {
+            console.error("Error saving reproduction record:", e);
+            messageElement.textContent = 'Gagal menyimpan data ke database: ' + e.message;
+            messageElement.classList.remove('hidden', 'text-emerald-600');
+            messageElement.classList.add('text-red-500');
+        }
+    };
+
+    // --- FUNGSI UNTUK UPDATE BOBOT (WEIGHT) ---
+
+    window.updateWeight = async function() {
+        const newWeightInput = document.getElementById('new-weight');
+        const messageElement = document.getElementById('weight-update-message');
+        const newWeight = parseInt(newWeightInput.value);
+        const today = new Date();
+        
+        messageElement.classList.add('hidden');
+        
+        if (isNaN(newWeight) || newWeight <= 0) {
+            messageElement.textContent = 'Masukkan bobot yang valid (> 0 kg).';
+            messageElement.classList.remove('hidden');
+            return;
+        }
+        
+        if (!livestockData || !db || !currentUserId) {
+            messageElement.textContent = 'Aplikasi belum siap. Coba lagi.';
+            messageElement.classList.remove('hidden');
+            return;
+        }
+
+        const latestRecord = livestockData.growthRecords[livestockData.growthRecords.length - 1];
+        if (latestRecord && newWeight <= latestRecord.weight) {
+             messageElement.textContent = `Bobot harus lebih besar dari bobot terakhir (${latestRecord.weight} kg).`;
+             messageElement.classList.remove('hidden');
+             return;
+        }
+        
+        const docRef = doc(db, 
+            `artifacts/${appId}/users/${currentUserId}/livestock`, 
+            currentAnimalId // Menggunakan ID ternak yang dipilih
+        );
+        
+        try {
+            const newRecord = {
+                date: Timestamp.fromDate(today),
+                weight: newWeight
+            };
+
+            await updateDoc(docRef, {
+                growthRecords: arrayUnion(newRecord)
+            });
+            
+            newWeightInput.value = ''; 
+            messageElement.textContent = `Bobot ${newWeight} kg berhasil disimpan!`;
+            messageElement.classList.remove('text-red-500');
+            messageElement.classList.add('text-emerald-600');
+            messageElement.classList.remove('hidden');
+
+            setTimeout(() => messageElement.classList.add('hidden'), 3000);
+
+        } catch (e) {
+            console.error("Error updating weight:", e);
+            messageElement.textContent = 'Gagal menyimpan data ke database.';
+            messageElement.classList.remove('hidden');
+        }
+    };
+    
+    // --- FUNGSI UNTUK MENYIMPAN RIWAYAT SILSILAH (PEDIGREE) ---
+    window.savePedigree = async function() {
+        const messageElement = document.getElementById('pedigree-update-message');
+        messageElement.classList.add('hidden');
+        messageElement.classList.remove('text-red-500', 'text-emerald-600');
+
+        const updatedPedigree = {
+            dam: {
+                name: document.getElementById('dam-name').value.trim(),
+                regId: document.getElementById('dam-regid').value.trim(),
+                breed: document.getElementById('dam-breed').value.trim(),
+                offspring: parseInt(document.getElementById('dam-offspring').value) || 0,
+                adgAvg: livestockData?.pedigree?.dam?.adgAvg || ""
+            },
+            sire: {
+                name: document.getElementById('sire-name').value.trim(),
+                semenId: document.getElementById('sire-semenid').value.trim(),
+                breed: document.getElementById('sire-breed').value.trim(),
+                characteristics: document.getElementById('sire-characteristics').value.trim()
+            }
+        };
+        
+        if (!updatedPedigree.dam.name && !updatedPedigree.sire.name && 
+            !updatedPedigree.dam.regId && !updatedPedigree.sire.semenId) {
+            messageElement.textContent = 'Minimal satu ID atau Nama Silsilah harus diisi.';
+            messageElement.classList.remove('hidden');
+            messageElement.classList.add('text-red-500');
+            return;
+        }
+
+        const docRef = doc(db, `artifacts/${appId}/users/${currentUserId}/livestock`, currentAnimalId);
+
+        try {
+            await updateDoc(docRef, {
+                pedigree: updatedPedigree
+            });
+            
+            messageElement.textContent = 'Data silsilah induk berhasil disimpan!';
+            messageElement.classList.remove('hidden');
+            messageElement.classList.add('text-emerald-600');
+            setTimeout(() => messageElement.classList.add('hidden'), 3000);
+
+        } catch (e) {
+            console.error("Error saving pedigree record:", e);
+            messageElement.textContent = 'Gagal menyimpan data ke database: ' + e.message;
+            messageElement.classList.remove('hidden');
+            messageElement.classList.add('text-red-500');
+        }
+    };
+
+
+    // Fungsi Global untuk mengelola TABS (dari HTML)
+    window.showTab = function(tabId) {
+        document.querySelectorAll('.px-4.py-2').forEach(btn => {
+            btn.classList.remove('active-tab');
+            btn.classList.add('inactive-tab');
+        });
+
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        }); 
+
+        document.getElementById(`content-${tabId}`).classList.remove('hidden');
+        document.getElementById(`tab-${tabId}`).classList.remove('inactive-tab');
+        document.getElementById(`tab-${tabId}`).classList.add('active-tab');
+    };
+
+    // Inisialisasi saat script dimuat
+    initFirebase();
+    
+    window.onload = () => showTab('kesehatan');
+</script>
